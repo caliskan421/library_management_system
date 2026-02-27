@@ -56,6 +56,7 @@ Yok
 ## Dokümantasyon
 
 Proje dokümantasyonuna aşağıdaki linklerden erişebilirsiniz:
+(Gereksinimlerin doldurulmasının zemine oturtma açısından proje mimarisinin kurulması ve interaktif süreç esnasında oluşturulması planlanmıştır...)
 
 - [Gereksinim Analizi](Gereksinim-Analizi.md)
 - [REST API Tasarımı](REST-API-Tasarimi.md)
