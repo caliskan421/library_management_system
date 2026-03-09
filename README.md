@@ -3,7 +3,7 @@
 
 ## Proje Hakkında
 
-![LibraNet](C127D2B5-FFF1-4F14-A8CB-228306B7EE04.png)
+![LibraNet](libranet_product.png)
 
 ### Proje Tanımı
 
