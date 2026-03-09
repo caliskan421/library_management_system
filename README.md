@@ -36,23 +36,6 @@ Yok
 
 ---
 
-## Gereksinim Analizi
-
-1. Kullanıcı Girişi (READ)
-2. Kullanıcı Kaydı (CREATE)
-3. Kitap Ekleme (CREATE)
-4. Kitap Güncelleme (UPDATE)
-5. Kitap Silme (DELETE)
-6. Kitap Detayı Görüntüleme (READ)
-7. Kütüphaneler Arası Kitap Arama (READ)
-8. Kitap Rezervasyonu Oluşturma (CREATE)
-9. Kitap İadesi (DELETE)
-10. Rezervasyon Detayı Görüntüleme (READ)
-11. Kullanıcıya Ait Rezervasyonları Listeleme (READ)
-12. Raporlama & İstatistik (READ)
-
----
-
 ## Dokümantasyon
 
 Proje dokümantasyonuna aşağıdaki linklerden erişebilirsiniz:
