@@ -10,7 +10,7 @@
 
 LibraNet REST API'sinin tam tasarımı OpenAPI 3.0.3 standardında hazırlanmıştır.
 
-> **[libranet.yaml dosyasını görüntüle](API-Tasarımı.md)** — Tüm endpoint tanımları, şemalar ve örnek yanıtlar bu dosyada yer almaktadır.
+> **[API-Tasarımı.yaml dosyasını görüntüle](API-Tasarımı.md)** — Tüm endpoint tanımları, şemalar ve örnek yanıtlar bu dosyada yer almaktadır.
 
 ---
 
