@@ -85,4 +85,4 @@ Middleware     Auth, hata yakalama, loglama
 
 ## API Dokümantasyonu
 
-Tüm endpointlerin detaylı tanımları için → **[REST API Tasarımı](../REST-API-Tasarimi.md)** ve **[libranet.yaml](../api/libranet.yaml)**
+Tüm endpointlerin detaylı tanımları için → **[REST API Tasarımı](../REST-API-Tasarimi.md)** ve **[libranet.yaml](../API-Tasarımı.md)**
