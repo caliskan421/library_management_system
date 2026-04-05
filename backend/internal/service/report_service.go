@@ -80,6 +80,18 @@ func (s *ReportService) Generate(ctx context.Context, q dto.ReportQuery) (*dto.R
 			})
 		}
 
+		details, _ := s.reservationRepo.RecentReservationsWithUsers(ctx, 50)
+		for _, d := range details {
+			response.Reservations = append(response.Reservations, dto.ReservationDetailReport{
+				BookTitle:  d.BookTitle,
+				UserName:   d.UserName,
+				UserEmail:  d.UserEmail,
+				Status:     d.Status,
+				ReservedAt: d.ReservedAt,
+				DueDate:    d.DueDate,
+			})
+		}
+
 	case "books":
 		total, _ := s.bookRepo.Count(ctx)
 		response.Summary = dto.ReportSummary{Total: total}

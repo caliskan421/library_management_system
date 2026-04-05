@@ -42,10 +42,11 @@ type ReservationResponse struct {
 
 // Report
 type ReportResponse struct {
-	GeneratedAt time.Time       `json:"generatedAt"`
-	Type        string          `json:"type"`
-	Summary     ReportSummary   `json:"summary"`
-	TopBooks    []TopBookReport `json:"topBooks,omitempty"`
+	GeneratedAt  time.Time                 `json:"generatedAt"`
+	Type         string                    `json:"type"`
+	Summary      ReportSummary             `json:"summary"`
+	TopBooks     []TopBookReport           `json:"topBooks,omitempty"`
+	Reservations []ReservationDetailReport `json:"reservations,omitempty"`
 }
 
 type ReportSummary struct {
@@ -58,6 +59,15 @@ type TopBookReport struct {
 	BookID           string `json:"bookId"`
 	Title            string `json:"title"`
 	ReservationCount int    `json:"reservationCount"`
+}
+
+type ReservationDetailReport struct {
+	BookTitle  string `json:"bookTitle"`
+	UserName   string `json:"userName"`
+	UserEmail  string `json:"userEmail"`
+	Status     string `json:"status"`
+	ReservedAt string `json:"reservedAt"`
+	DueDate    string `json:"dueDate"`
 }
 
 // Error

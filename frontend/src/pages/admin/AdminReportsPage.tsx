@@ -88,6 +88,44 @@ export default function AdminReportsPage() {
             </div>
           )}
 
+          {report.reservations && report.reservations.length > 0 && (
+            <div className="bg-white rounded-lg shadow p-6 mt-6">
+              <h2 className="text-lg font-semibold text-gray-900 mb-4">Rezervasyon Detaylari</h2>
+              <div className="overflow-x-auto">
+                <table className="w-full">
+                  <thead className="bg-gray-50">
+                    <tr>
+                      <th className="px-4 py-3 text-left text-sm font-medium text-gray-600">Kitap</th>
+                      <th className="px-4 py-3 text-left text-sm font-medium text-gray-600">Kullanici</th>
+                      <th className="px-4 py-3 text-left text-sm font-medium text-gray-600">E-posta</th>
+                      <th className="px-4 py-3 text-left text-sm font-medium text-gray-600">Durum</th>
+                      <th className="px-4 py-3 text-left text-sm font-medium text-gray-600">Tarih</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-gray-200">
+                    {report.reservations.map((r, i) => (
+                      <tr key={i} className="hover:bg-gray-50">
+                        <td className="px-4 py-3 text-sm text-gray-900">{r.bookTitle}</td>
+                        <td className="px-4 py-3 text-sm text-gray-700">{r.userName}</td>
+                        <td className="px-4 py-3 text-sm text-gray-500">{r.userEmail}</td>
+                        <td className="px-4 py-3">
+                          <span className={`px-2 py-1 rounded-full text-xs font-medium ${
+                            r.status === 'active' ? 'bg-blue-100 text-blue-700' : 'bg-gray-100 text-gray-600'
+                          }`}>
+                            {r.status === 'active' ? 'Aktif' : 'Iade'}
+                          </span>
+                        </td>
+                        <td className="px-4 py-3 text-sm text-gray-500">
+                          {new Date(r.reservedAt).toLocaleDateString('tr-TR')}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          )}
+
           <p className="text-xs text-gray-400 mt-4">
             Rapor tarihi: {new Date(report.generatedAt).toLocaleString('tr-TR')}
           </p>

@@ -44,6 +44,8 @@ func (h *ReservationHandler) Create(c *fiber.Ctx) error {
 			return c.Status(fiber.StatusBadRequest).JSON(dto.ErrorResponse{Message: err.Error()})
 		case errors.Is(err, service.ErrMaxReservations):
 			return c.Status(fiber.StatusBadRequest).JSON(dto.ErrorResponse{Message: err.Error()})
+		case errors.Is(err, service.ErrAlreadyReserved):
+			return c.Status(fiber.StatusConflict).JSON(dto.ErrorResponse{Message: err.Error()})
 		default:
 			return c.Status(fiber.StatusInternalServerError).JSON(dto.ErrorResponse{
 				Message: "Rezervasyon oluşturulurken bir hata oluştu",

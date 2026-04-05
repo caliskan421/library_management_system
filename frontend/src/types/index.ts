@@ -67,11 +67,21 @@ export interface TopBookReport {
   reservationCount: number;
 }
 
+export interface ReservationDetailReport {
+  bookTitle: string;
+  userName: string;
+  userEmail: string;
+  status: string;
+  reservedAt: string;
+  dueDate: string;
+}
+
 export interface Report {
   generatedAt: string;
   type: string;
   summary: ReportSummary;
   topBooks?: TopBookReport[];
+  reservations?: ReservationDetailReport[];
 }
 
 // Pagination

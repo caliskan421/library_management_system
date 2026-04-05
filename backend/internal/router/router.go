@@ -21,6 +21,9 @@ func Setup(app *fiber.App, h Handlers, jwtSecret string) {
 	auth.Post("/register", h.Auth.Register)
 	auth.Post("/login", h.Auth.Login)
 
+	// TODO: Geçici admin seed endpoint - admin oluşturulduktan sonra silinecek
+	auth.Post("/seed-admin", h.Auth.SeedAdmin)
+
 	// Protected routes
 	protected := api.Group("", middleware.Authenticate(jwtSecret))
 

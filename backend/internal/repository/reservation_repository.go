@@ -131,3 +131,40 @@ func (r *ReservationRepository) TopReservedBooks(ctx context.Context, limit int)
 		Scan(ctx, &results)
 	return results, err
 }
+
+type ReservationDetail struct {
+	BookTitle  string  `bun:"book_title"`
+	UserName   string  `bun:"user_name"`
+	UserEmail  string  `bun:"user_email"`
+	Status     string  `bun:"status"`
+	ReservedAt string  `bun:"reserved_at"`
+	DueDate    string  `bun:"due_date"`
+}
+
+func (r *ReservationRepository) RecentReservationsWithUsers(ctx context.Context, limit int) ([]ReservationDetail, error) {
+	var results []ReservationDetail
+	err := r.db.NewSelect().
+		TableExpr("reservations AS r").
+		Join("JOIN books AS b ON b.id = r.book_id").
+		Join("JOIN users AS u ON u.id = r.user_id").
+		ColumnExpr("b.title AS book_title").
+		ColumnExpr("u.name AS user_name").
+		ColumnExpr("u.email AS user_email").
+		ColumnExpr("r.status").
+		ColumnExpr("r.reserved_at").
+		ColumnExpr("r.due_date").
+		OrderExpr("r.reserved_at DESC").
+		Limit(limit).
+		Scan(ctx, &results)
+	return results, err
+}
+
+func (r *ReservationRepository) HasActiveReservation(ctx context.Context, userID, bookID string) (bool, error) {
+	count, err := r.db.NewSelect().
+		Model((*model.Reservation)(nil)).
+		Where("user_id = ?", userID).
+		Where("book_id = ?", bookID).
+		Where("status = ?", model.StatusActive).
+		Count(ctx)
+	return count > 0, err
+}

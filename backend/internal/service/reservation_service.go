@@ -17,6 +17,7 @@ var (
 	ErrAlreadyReturned     = errors.New("bu kitap zaten iade edilmiş")
 	ErrInvalidDueDate      = errors.New("geçersiz iade tarihi")
 	ErrMaxReservations     = errors.New("maksimum aktif rezervasyon sayısına ulaşıldı")
+	ErrAlreadyReserved     = errors.New("bu kitap için zaten aktif bir rezervasyonunuz var")
 )
 
 const MaxActiveReservationsPerUser = 5
@@ -54,6 +55,14 @@ func (s *ReservationService) Create(ctx context.Context, userID string, req dto.
 	}
 	if !book.Available() {
 		return nil, ErrBookNotAvailable
+	}
+
+	alreadyReserved, err := s.reservationRepo.HasActiveReservation(ctx, userID, req.BookID)
+	if err != nil {
+		return nil, err
+	}
+	if alreadyReserved {
+		return nil, ErrAlreadyReserved
 	}
 
 	activeCount, err := s.reservationRepo.CountActiveByUserID(ctx, userID)

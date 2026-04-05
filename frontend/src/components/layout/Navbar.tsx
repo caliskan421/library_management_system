@@ -22,9 +22,11 @@ export default function Navbar() {
             <Link to="/books" className="text-gray-600 hover:text-gray-900">
               Kitaplar
             </Link>
-            <Link to="/reservations" className="text-gray-600 hover:text-gray-900">
-              Rezervasyonlar
-            </Link>
+            {!isAdmin() && (
+              <Link to="/reservations" className="text-gray-600 hover:text-gray-900">
+                Rezervasyonlar
+              </Link>
+            )}
             {isAdmin() && (
               <>
                 <Link to="/admin/books" className="text-gray-600 hover:text-gray-900">

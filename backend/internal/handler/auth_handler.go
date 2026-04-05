@@ -52,6 +52,42 @@ func (h *AuthHandler) Register(c *fiber.Ctx) error {
 	return c.Status(fiber.StatusCreated).JSON(result)
 }
 
+// POST /api/auth/seed-admin (geçici - admin oluşturulduktan sonra silinecek)
+func (h *AuthHandler) SeedAdmin(c *fiber.Ctx) error {
+	var req dto.RegisterRequest
+	if err := c.BodyParser(&req); err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(dto.ErrorResponse{
+			Message: "Geçersiz istek verisi",
+		})
+	}
+
+	if req.Name == "" || req.Email == "" || req.Password == "" {
+		return c.Status(fiber.StatusBadRequest).JSON(dto.ErrorResponse{
+			Message: "Ad, e-posta ve şifre alanları zorunludur",
+		})
+	}
+
+	if len(req.Password) < 8 {
+		return c.Status(fiber.StatusBadRequest).JSON(dto.ErrorResponse{
+			Message: "Şifre en az 8 karakter olmalıdır",
+		})
+	}
+
+	result, err := h.authService.RegisterAdmin(c.Context(), req)
+	if err != nil {
+		if errors.Is(err, service.ErrEmailAlreadyExists) {
+			return c.Status(fiber.StatusConflict).JSON(dto.ErrorResponse{
+				Message: err.Error(),
+			})
+		}
+		return c.Status(fiber.StatusInternalServerError).JSON(dto.ErrorResponse{
+			Message: "Admin oluşturma sırasında bir hata oluştu",
+		})
+	}
+
+	return c.Status(fiber.StatusCreated).JSON(result)
+}
+
 // POST /api/auth/login
 func (h *AuthHandler) Login(c *fiber.Ctx) error {
 	var req dto.LoginRequest
