@@ -76,6 +76,25 @@ func main() {
 		return c.JSON(fiber.Map{"status": "ok"})
 	})
 
+	// Temporary seed endpoint - promote user to admin by secret key
+	app.Post("/seed/admin", func(c *fiber.Ctx) error {
+		var body struct {
+			Email string `json:"email"`
+			Key   string `json:"key"`
+		}
+		if err := c.BodyParser(&body); err != nil {
+			return c.Status(400).JSON(fiber.Map{"message": "invalid request"})
+		}
+		if body.Key != cfg.JWT.Secret {
+			return c.Status(403).JSON(fiber.Map{"message": "invalid key"})
+		}
+		_, err := db.ExecContext(c.Context(), "UPDATE users SET role='admin' WHERE email=?", body.Email)
+		if err != nil {
+			return c.Status(500).JSON(fiber.Map{"message": err.Error()})
+		}
+		return c.JSON(fiber.Map{"message": "user promoted to admin"})
+	})
+
 	// Routes
 	router.Setup(app, router.Handlers{
 		Auth:        authHandler,
