@@ -13,10 +13,13 @@ import (
 )
 
 func New(cfg config.DBConfig) (*bun.DB, error) {
-	dsn := fmt.Sprintf(
-		"postgres://%s:%s@%s:%s/%s?sslmode=%s",
-		cfg.User, cfg.Password, cfg.Host, cfg.Port, cfg.Name, cfg.SSLMode,
-	)
+	dsn := cfg.URL
+	if dsn == "" {
+		dsn = fmt.Sprintf(
+			"postgres://%s:%s@%s:%s/%s?sslmode=%s",
+			cfg.User, cfg.Password, cfg.Host, cfg.Port, cfg.Name, cfg.SSLMode,
+		)
+	}
 
 	sqldb := sql.OpenDB(pgdriver.NewConnector(pgdriver.WithDSN(dsn)))
 	db := bun.NewDB(sqldb, pgdialect.New())
@@ -41,6 +44,17 @@ func Migrate(ctx context.Context, db *bun.DB) error {
 			IfNotExists().
 			Exec(ctx); err != nil {
 			return fmt.Errorf("migration failed: %w", err)
+		}
+	}
+
+	// Add new columns to existing tables (idempotent)
+	alterStatements := []string{
+		`ALTER TABLE users ADD COLUMN IF NOT EXISTS failed_login_attempts INTEGER NOT NULL DEFAULT 0`,
+		`ALTER TABLE users ADD COLUMN IF NOT EXISTS locked_until TIMESTAMPTZ`,
+	}
+	for _, stmt := range alterStatements {
+		if _, err := db.ExecContext(ctx, stmt); err != nil {
+			return fmt.Errorf("alter migration failed: %w", err)
 		}
 	}
 

@@ -3,6 +3,7 @@ package service
 import (
 	"context"
 	"errors"
+	"time"
 
 	"github.com/muhammetalicaliskan/libranet/internal/config"
 	"github.com/muhammetalicaliskan/libranet/internal/dto"
@@ -12,9 +13,15 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
+const (
+	MaxFailedLoginAttempts = 5
+	AccountLockDuration    = 15 * time.Minute
+)
+
 var (
 	ErrEmailAlreadyExists = errors.New("bu e-posta adresi zaten kayıtlı")
 	ErrInvalidCredentials = errors.New("e-posta veya şifre hatalı")
+	ErrAccountLocked      = errors.New("hesabınız geçici olarak kilitlendi, lütfen daha sonra tekrar deneyin")
 )
 
 type AuthService struct {
@@ -71,8 +78,37 @@ func (s *AuthService) Login(ctx context.Context, req dto.LoginRequest) (*dto.Aut
 		return nil, ErrInvalidCredentials
 	}
 
+	// Check if account is locked
+	if user.LockedUntil != nil && user.LockedUntil.After(time.Now()) {
+		return nil, ErrAccountLocked
+	}
+
+	// If lock expired, reset
+	if user.LockedUntil != nil && user.LockedUntil.Before(time.Now()) {
+		user.FailedLoginAttempts = 0
+		user.LockedUntil = nil
+		_ = s.userRepo.Update(ctx, user)
+	}
+
 	if err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(req.Password)); err != nil {
+		user.FailedLoginAttempts++
+		if user.FailedLoginAttempts >= MaxFailedLoginAttempts {
+			lockUntil := time.Now().Add(AccountLockDuration)
+			user.LockedUntil = &lockUntil
+		}
+		_ = s.userRepo.Update(ctx, user)
+
+		if user.FailedLoginAttempts >= MaxFailedLoginAttempts {
+			return nil, ErrAccountLocked
+		}
 		return nil, ErrInvalidCredentials
+	}
+
+	// Successful login: reset failed attempts
+	if user.FailedLoginAttempts > 0 {
+		user.FailedLoginAttempts = 0
+		user.LockedUntil = nil
+		_ = s.userRepo.Update(ctx, user)
 	}
 
 	token, err := jwtpkg.GenerateToken(user.ID, user.Email, string(user.Role), s.cfg.JWT.Secret, s.cfg.JWT.Expiry)

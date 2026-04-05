@@ -14,6 +14,7 @@ type Config struct {
 }
 
 type DBConfig struct {
+	URL      string // Render provides DATABASE_URL as single DSN
 	Host     string
 	Port     string
 	User     string
@@ -40,8 +41,15 @@ func Load() *Config {
 		expiry = 24 * time.Hour
 	}
 
+	// Render provides PORT (not APP_PORT)
+	port := getEnv("PORT", "")
+	if port == "" {
+		port = getEnv("APP_PORT", "3000")
+	}
+
 	return &Config{
 		DB: DBConfig{
+			URL:      getEnv("DATABASE_URL", ""),
 			Host:     getEnv("DB_HOST", "localhost"),
 			Port:     getEnv("DB_PORT", "5432"),
 			User:     getEnv("DB_USER", "postgres"),
@@ -54,7 +62,7 @@ func Load() *Config {
 			Expiry: expiry,
 		},
 		App: AppConfig{
-			Port: getEnv("APP_PORT", "3000"),
+			Port: port,
 			Env:  getEnv("APP_ENV", "development"),
 		},
 	}

@@ -38,6 +38,11 @@ func (r *UserRepository) GetByID(ctx context.Context, id string) (*model.User, e
 	return user, nil
 }
 
+func (r *UserRepository) Update(ctx context.Context, user *model.User) error {
+	_, err := r.db.NewUpdate().Model(user).WherePK().Exec(ctx)
+	return err
+}
+
 func (r *UserRepository) Count(ctx context.Context) (int, error) {
 	return r.db.NewSelect().Model((*model.User)(nil)).Count(ctx)
 }

@@ -74,6 +74,11 @@ func (h *AuthHandler) Login(c *fiber.Ctx) error {
 				Message: err.Error(),
 			})
 		}
+		if errors.Is(err, service.ErrAccountLocked) {
+			return c.Status(fiber.StatusUnauthorized).JSON(dto.ErrorResponse{
+				Message: err.Error(),
+			})
+		}
 		return c.Status(fiber.StatusInternalServerError).JSON(dto.ErrorResponse{
 			Message: "Giriş işlemi sırasında bir hata oluştu",
 		})

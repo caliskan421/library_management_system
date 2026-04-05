@@ -16,11 +16,13 @@ const (
 type User struct {
 	bun.BaseModel `bun:"table:users,alias:u"`
 
-	ID        string    `bun:"id,pk,type:uuid,default:gen_random_uuid()" json:"_id"`
-	Name      string    `bun:"name,notnull" json:"name"`
-	Email     string    `bun:"email,notnull,unique" json:"email"`
-	Password  string    `bun:"password,notnull" json:"-"`
-	Role      Role      `bun:"role,notnull,default:'user'" json:"role"`
-	CreatedAt time.Time `bun:"created_at,notnull,default:current_timestamp" json:"createdAt"`
-	UpdatedAt time.Time `bun:"updated_at,notnull,default:current_timestamp" json:"updatedAt"`
+	ID                  string     `bun:"id,pk,type:uuid,default:gen_random_uuid()" json:"_id"`
+	Name                string     `bun:"name,notnull" json:"name"`
+	Email               string     `bun:"email,notnull,unique" json:"email"`
+	Password            string     `bun:"password,notnull" json:"-"`
+	Role                Role       `bun:"role,notnull,default:'user'" json:"role"`
+	FailedLoginAttempts int        `bun:"failed_login_attempts,notnull,default:0" json:"-"`
+	LockedUntil         *time.Time `bun:"locked_until" json:"-"`
+	CreatedAt           time.Time  `bun:"created_at,notnull,default:current_timestamp" json:"createdAt"`
+	UpdatedAt           time.Time  `bun:"updated_at,notnull,default:current_timestamp" json:"updatedAt"`
 }
